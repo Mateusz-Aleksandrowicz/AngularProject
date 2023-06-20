@@ -13,7 +13,7 @@ let FeatureSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    required: true,
+    required: false,
     default: "TODO",
   },
   owner: {
@@ -22,8 +22,9 @@ let FeatureSchema = new mongoose.Schema({
     default: "John Doe",
   },
   project: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Project',
+    type: String,
+    required: false,
+    default: "Nowa aplikacja",
   },
 });
 
