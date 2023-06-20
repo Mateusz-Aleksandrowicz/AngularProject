@@ -1,11 +1,12 @@
-const Feature = require("../models/Feature");
+const Task = require("../models/Task");
 
 exports.create = (req, res) => {
-  let feature = new Feature({
+  let task = new Task({
     name: req.body.name,
     description: req.body.description,
+    feature: req.params.id
   })
-  feature.save().then((result) => {
+  task.save().then((result) => {
     res.json(result)
   }).catch(err => {
     res.json(err, 400);
@@ -13,9 +14,9 @@ exports.create = (req, res) => {
 }
 
 exports.read = (req, res) => {
-  Feature.findOne({_id: req.params.id}).then((feature) => {
-    if (feature) {
-      res.json(feature);
+  Task.findOne({_id: req.params.id}).then((task) => {
+    if (task) {
+      res.json(task);
     } else {
       res.json(false, 404);
     }
@@ -23,7 +24,7 @@ exports.read = (req, res) => {
 }
 
 exports.update = (req, res) => {
-  Feature.findByIdAndUpdate(
+  Task.findByIdAndUpdate(
     req.params.id,
     req.body,
     { returnDocument: 'after' }
@@ -33,7 +34,7 @@ exports.update = (req, res) => {
 }
 
 exports.delete = (req, res) => {
-  Feature.findByIdAndDelete(req.params.id).then((result) => {
+  Task.findByIdAndDelete(req.params.id).then((result) => {
     if (result) {
       return res.json(true, 200);
     } else {
@@ -43,7 +44,13 @@ exports.delete = (req, res) => {
 }
 
 exports.list = (req, res) => {
-  Feature.find({}).then((features) => {
-    res.json(features);
+  Task.find({}).then((tasks) => {
+    res.json(tasks);
+  })
+}
+
+exports.listByFeature = (req, res) => {
+  Task.find({feature: req.params.id}).then((tasks) => {
+    return res.json(tasks);
   })
 }

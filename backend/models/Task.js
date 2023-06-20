@@ -39,3 +39,5 @@ let TaskSchema = new mongoose.Schema({
     default: "John Doe",
   }
 })
+
+module.exports = mongoose.model("Task", TaskSchema);

@@ -11,7 +11,9 @@ app.get('/', (req, res) => {
 
 app.use(express.json());
 const featuresRouter = require('./routes/features');
+const tasksRouter = require('./routes/tasks');
 router.use('/feature', featuresRouter);
+router.use('/task', tasksRouter);
 app.use('/', router);
 
 let db = mongoose.connection;
