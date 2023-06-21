@@ -3,8 +3,9 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const router = express.Router();
+const cors = require("cors");
 const mongoose = require('mongoose');
-
+app.use(cors());
 app.get('/', (req, res) => {
   res.send('Hello world');
 })

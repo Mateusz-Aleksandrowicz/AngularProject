@@ -7,4 +7,7 @@ router.patch('/:id', tasksController.update)
 router.delete('/:id', tasksController.delete)
 router.get('/', tasksController.list)
 
+router.get('/:id/doing', tasksController.setTaskDoing)
+router.get('/:id/done', tasksController.setTaskDone)
+
 module.exports = router;

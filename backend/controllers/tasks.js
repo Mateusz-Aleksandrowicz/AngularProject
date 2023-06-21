@@ -54,3 +54,25 @@ exports.listByFeature = (req, res) => {
     return res.json(tasks);
   })
 }
+
+exports.setTaskDoing = (req, res) => {
+  Task.findOne({_id: req.params.id}).then((task) => {
+    task.status = "DOING",
+    task.startDate = new Date();
+
+    task.save().then((task) => {
+      return res.json(task);
+    })
+  })
+}
+
+exports.setTaskDone = (req, res) => {
+  Task.findOne({_id: req.params.id}).then((task) => {
+    task.status = "DONE",
+    task.endDate = new Date();
+
+    task.save().then((task) => {
+      return res.json(task);
+    })
+  })
+}

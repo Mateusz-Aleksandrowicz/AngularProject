@@ -10,14 +10,15 @@
 </div>
 
 <div class="feature-details" [class.show]="featureDetails">
-  <button>zamknij</button>
+  <button (click)="close()">zamknij</button>
   <h2>{{ featureDetails?.name }}</h2>
   <p>{{ featureDetails?.description }}</p>
+  <p>Właściciel: {{ featureDetails?.owner }}</p>
+  <p>Status: {{ featureDetails?.status }}</p>
 
+  <h3>Zadania</h3>
   <div *ngIf="featureTasks?.length; else notasks">
-    <div *ngFor="let task of featureTasks" class="task">
-      <div class="circle">></div><span>{{ task.name }}</span>
-    </div>
+    <app-task *ngFor="let task of featureTasks" [task]="task"></app-task>
   </div>
   <ng-template #notasks>
     Brak zadań

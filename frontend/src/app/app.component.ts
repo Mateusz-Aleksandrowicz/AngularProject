@@ -7,7 +7,7 @@ import { ProjectService } from './project.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'manageme';
+  title = 'myApp';
   features: any;
   // showDetails = false;
   featureDetails: any = null;
@@ -28,5 +28,9 @@ export class AppComponent {
         this.featureTasks = tasks;
       })
     })
+  }
+
+  close() {
+    this.featureDetails = null;
   }
 }
