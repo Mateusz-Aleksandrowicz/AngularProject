@@ -18,10 +18,17 @@
 
   <h3>Zadania</h3>
   <div *ngIf="featureTasks?.length; else notasks">
-    <app-task *ngFor="let task of featureTasks" [task]="task"></app-task>
+    <app-task *ngFor="let task of featureTasks" [task]="task" (reload)="onReload($event)" (edit)="onEdit($event)"></app-task>
   </div>
   <ng-template #notasks>
     Brak zadań
   </ng-template>
 
+  <div class="add-form">
+    <h4>{{ newTask._id ? 'Edytuj zadanie' : 'Dodaj zadanie' }}</h4>
+    <input type="text" [(ngModel)]="newTask.name" placeholder="Nazwa zadania" class="input"><br>
+    <textarea cols="30" rows="10" placeholder="Opis" [(ngModel)]="newTask.description" class="input"></textarea>
+    <button class="form" [disabled]="!(newTask.description && newTask.name)" (click)="addTask(featureDetails?._id)">{{ newTask._id ? 'Zapisz' : 'Dodaj' }}</button>
+    <button class="form" *ngIf="newTask._id" (click)="reset()">Anuluj</button>
+  </div>
 </div>

@@ -28,4 +28,15 @@ export class ProjectService {
   setTaskDone(taskId: string) {
     return this.http.get<any>(this.serverUrl + 'task/' + taskId + '/done')
   }
+
+  addTask(featureId: string, task: any) {
+    return this.http.post<any>(this.serverUrl + 'feature/' + featureId + '/task', task)
+  }
+
+  deleteTask(taskId: string) {
+    return this.http.delete<any>(this.serverUrl + 'task/' + taskId)
+  }
+  editTask(task: any) {
+    return this.http.patch<any>(this.serverUrl + 'task/' + task._id, {name: task.name, description: task.description})
+  }
 }

@@ -7,11 +7,16 @@ import { ProjectService } from './project.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'myApp';
+  title = 'manageme';
   features: any;
   // showDetails = false;
   featureDetails: any = null;
   featureTasks: any = null;
+  newTask = {
+    _id: "",
+    name: "",
+    description: ""
+  }
 
   constructor(private projectService: ProjectService) {
     projectService.getFeatures().subscribe((features) => {
@@ -32,5 +37,40 @@ export class AppComponent {
 
   close() {
     this.featureDetails = null;
+  }
+
+  onReload(featureId: string) {
+    this.loadFeatureDetails(featureId);
+  }
+
+  addTask(featureId: string) {
+    if (this.newTask._id) {
+      this.projectService.editTask(this.newTask).subscribe((task) => {
+        if (task) {
+          this.reset();
+          this.onReload(featureId);
+        }
+      })
+    } else {
+      this.projectService.addTask(featureId, this.newTask).subscribe((res) => {
+        if(res) {
+          this.reset();
+          this.onReload(featureId);
+        }
+      })
+    }
+
+  }
+
+  onEdit(task: any) {
+    this.newTask = {
+      _id: task._id,
+      name: task.name,
+      description: task.description,
+    }
+  }
+
+  reset() {
+    this.newTask = {_id: "", name: "", description: ""};
   }
 }

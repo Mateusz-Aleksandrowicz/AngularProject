@@ -1,24 +1,46 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { ProjectService } from './project.service';
 
 @Component({
   selector: 'app-task',
   template: `
-    <div class="task">
-      <div class="info">
-      <span class="name">{{ task.name }}</span><br>
-      <small *ngIf="task.status === 'TODO'">DODANO: {{ task.addedDate | date:'dd.MM.YYYY \o HH:mm' }}</small>
-      <small *ngIf="task.status === 'DOING'">ROZPOCZĘTO: {{ task.startDate | date:'dd.MM.YYY \o HH:mm' }}</small>
-      <small *ngIf="task.status === 'DONE'">ZAKOŃCZONO: {{ task.endDate | date:'dd.MM.YYY \o HH:mm' }}</small>
-      </div>
-      <div class="status">
-        <select name="" id="" (change)="onStatusChange($event)">
-          <option value="TODO" [selected]="task.status === 'TODO'">to do</option>
-          <option value="DOING" [selected]="task.status === 'DOING'">w trakcie</option>
-          <option value="DONE" [selected]="task.status === 'DONE'">zrobione</option>
-        </select>
+    <div class="task" [class.todo]="task.status === 'TODO'" [class.doing]="task.status === 'DOING'" [class.done]="task.status === 'DONE'">
+      <div class="body">
+        <div class="info">
+          <span class="name" (click)="toggleDetails()">{{ task.name }}</span
+          ><br />
+          <small *ngIf="task.status === 'TODO'"
+            >DODANO: {{ task.addedDate | date : 'dd.MM.YYYY o HH:mm' }}</small
+          >
+          <small *ngIf="task.status === 'DOING'"
+            >ROZPOCZĘTO:
+            {{ task.startDate | date : 'dd.MM.YYY o HH:mm' }}</small
+          >
+          <small *ngIf="task.status === 'DONE'"
+            >ZAKOŃCZONO: {{ task.endDate | date : 'dd.MM.YYY o HH:mm' }}</small
+          >
+        </div>
+        <div class="status">
+          <select name="" id="" (change)="onStatusChange($event)">
+            <option value="TODO" [selected]="task.status === 'TODO'">
+              to do
+            </option>
+            <option value="DOING" [selected]="task.status === 'DOING'">
+              w trakcie
+            </option>
+            <option value="DONE" [selected]="task.status === 'DONE'">
+              zrobione
+            </option>
+          </select>
+        </div>
       </div>
 
+      <div class="details" *ngIf="showDetails">
+        <p>{{ task.description }}</p>
+        <small>WŁAŚCICIEL: {{ task.owner }}</small><br>
+        <small>FUNKCJONALNOŚĆ: {{ feature.name }}</small><br>
+        <button class="button delete" (click)="deleteTask()">usuń</button> <button class="button edit" (click)="editTask()">edytuj</button>
+      </div>
     </div>
   `,
   styles: [
@@ -29,6 +51,20 @@ import { ProjectService } from './project.service';
         border-radius: 4px;
         box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
         margin-bottom: 6px;
+        border-left: solid 10px black;
+      }
+
+      .task.todo {
+        border-left-color: #eeeeee;
+      }
+      .task.doing {
+        border-left-color: #aaaaff;
+      }
+      .task.done {
+        border-left-color: #aaffaa;
+      }
+
+      .task .body {
         display: flex;
         align-items: center;
       }
@@ -72,20 +108,54 @@ import { ProjectService } from './project.service';
     `,
   ],
 })
-export class TaskComponent {
+export class TaskComponent implements OnChanges {
   @Input() task!: any;
+  @Output() reload = new EventEmitter<string>();
+  @Output() edit = new EventEmitter<any>();
+
+  feature: any;
+  showDetails = false;
 
   constructor(private projectService: ProjectService) {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+    let taskChange = changes['task'];
+
+    if (taskChange) {
+      this.projectService
+        .getFeatureDetails(taskChange.currentValue.feature)
+        .subscribe((feature) => {
+          this.feature = feature;
+        });
+    }
+  }
+
   onStatusChange(event: any) {
-    if (event.target.value === "DOING") {
+    if (event.target.value === 'DOING') {
       this.projectService.setTaskDoing(this.task._id).subscribe((result) => {
         console.log(result);
-      })
-    } else if (event.target.value === "DONE") {
+      });
+    } else if (event.target.value === 'DONE') {
       this.projectService.setTaskDone(this.task._id).subscribe((result) => {
         console.log(result);
-      })
+      });
     }
+    this.reload.emit(this.feature._id);
+  }
+
+  toggleDetails() {
+    this.showDetails = !this.showDetails;
+  }
+
+  deleteTask() {
+    this.projectService.deleteTask(this.task._id).subscribe((res) => {
+      if (res) {
+        this.reload.emit(this.feature._id);
+      }
+    })
+  }
+
+  editTask() {
+    this.edit.emit(this.task);
   }
 }
