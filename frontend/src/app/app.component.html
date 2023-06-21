@@ -1,7 +1,15 @@
 <h1>Projekt Nowa Aplikacja</h1>
-<h2>Lista funkcjonalności</h2>
+<h2>Lista funkcjonalności <button class="button add" (click)="toggleShow()">dodaj nową</button></h2>
+<div class="add-feature" *ngIf="showAddForm">
+  <input type="text" [(ngModel)]="newFeature.name" placeholder="Nazwa funkcjonalności" class="input"><br>
+  <textarea cols="30" rows="10" placeholder="Opis" [(ngModel)]="newFeature.description" class="input"></textarea>
+  <button class="button add" [disabled]="!(newFeature.description && newFeature.name)" (click)="addFeature()">{{
+    newFeature._id ? 'Zapisz' : 'Dodaj' }}</button>
+  <button class="button add" *ngIf="newFeature._id" (click)="reset()">Anuluj</button>
+</div>
 <div *ngFor="let feature of features" (click)="loadFeatureDetails(feature._id)">
-  <div class="feature" [class.todo]="feature.status === 'TODO'" [class.done]="feature.status === 'DONE'" [class.doing]="feature.status === 'DOING'">
+  <div class="feature" [class.todo]="feature.status === 'TODO'" [class.done]="feature.status === 'DONE'"
+    [class.doing]="feature.status === 'DOING'">
     <div class="name">{{ feature.name }}</div>
     <div class="details">
       <div class="owner"><img class="icon" src="../../assets/user.svg"> <span>{{ feature.owner }}</span></div>
@@ -10,7 +18,7 @@
 </div>
 
 <div class="feature-details" [class.show]="featureDetails">
-  <button (click)="close()">zamknij</button>
+  <button (click)="close()">zamknij</button> <button (click)="delete(featureDetails?._id)" [style.margin-left.px]="6">usuń</button>
   <h2>{{ featureDetails?.name }}</h2>
   <p>{{ featureDetails?.description }}</p>
   <p>Właściciel: {{ featureDetails?.owner }}</p>
@@ -18,7 +26,8 @@
 
   <h3>Zadania</h3>
   <div *ngIf="featureTasks?.length; else notasks">
-    <app-task *ngFor="let task of featureTasks" [task]="task" (reload)="onReload($event)" (edit)="onEdit($event)"></app-task>
+    <app-task *ngFor="let task of featureTasks" [task]="task" (reload)="onReload($event)"
+      (edit)="onEdit($event)"></app-task>
   </div>
   <ng-template #notasks>
     Brak zadań
@@ -28,7 +37,8 @@
     <h4>{{ newTask._id ? 'Edytuj zadanie' : 'Dodaj zadanie' }}</h4>
     <input type="text" [(ngModel)]="newTask.name" placeholder="Nazwa zadania" class="input"><br>
     <textarea cols="30" rows="10" placeholder="Opis" [(ngModel)]="newTask.description" class="input"></textarea>
-    <button class="form" [disabled]="!(newTask.description && newTask.name)" (click)="addTask(featureDetails?._id)">{{ newTask._id ? 'Zapisz' : 'Dodaj' }}</button>
+    <button class="form" [disabled]="!(newTask.description && newTask.name)" (click)="addTask(featureDetails?._id)">{{
+      newTask._id ? 'Zapisz' : 'Dodaj' }}</button>
     <button class="form" *ngIf="newTask._id" (click)="reset()">Anuluj</button>
   </div>
 </div>

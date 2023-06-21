@@ -22,6 +22,14 @@ export class ProjectService {
     return this.http.get<any>(this.serverUrl + 'feature/' + featureId + '/task')
   }
 
+  addFeature(feature: any) {
+    return this.http.post<any>(this.serverUrl + 'feature', feature);
+  }
+
+  deleteFeature(featureId: string) {
+    return this.http.delete<any>(this.serverUrl + 'feature/' + featureId);
+  }
+
   setTaskDoing(taskId: string) {
     return this.http.get<any>(this.serverUrl + 'task/' + taskId + '/doing')
   }

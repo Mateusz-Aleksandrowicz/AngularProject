@@ -7,7 +7,7 @@ import { ProjectService } from './project.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'manageme';
+  title = 'myapp';
   features: any;
   // showDetails = false;
   featureDetails: any = null;
@@ -17,6 +17,13 @@ export class AppComponent {
     name: "",
     description: ""
   }
+  newFeature = {
+    _id: "",
+    name: "",
+    description: ""
+  }
+
+  showAddForm = false;
 
   constructor(private projectService: ProjectService) {
     projectService.getFeatures().subscribe((features) => {
@@ -41,6 +48,13 @@ export class AppComponent {
 
   onReload(featureId: string) {
     this.loadFeatureDetails(featureId);
+    this.onReloadAll();
+  }
+
+  onReloadAll() {
+    this.projectService.getFeatures().subscribe((features) => {
+      this.features = features;
+    });
   }
 
   addTask(featureId: string) {
@@ -72,5 +86,28 @@ export class AppComponent {
 
   reset() {
     this.newTask = {_id: "", name: "", description: ""};
+    this.newFeature = {_id: "", name: "", description: ""};
+  }
+
+  toggleShow() {
+    this.showAddForm = !this.showAddForm;
+  }
+
+  addFeature() {
+    this.projectService.addFeature(this.newFeature).subscribe((res) => {
+      if (res) {
+        this.onReloadAll();
+        this.reset();
+      }
+    })
+  }
+
+  delete(featureId: string) {
+    this.projectService.deleteFeature(featureId).subscribe((res) => {
+      if (res) {
+        this.onReloadAll();
+        this.close();
+      }
+    })
   }
 }

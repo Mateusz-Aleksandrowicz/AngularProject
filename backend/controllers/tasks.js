@@ -1,4 +1,5 @@
 const Task = require("../models/Task");
+const Feature = require("../models/Feature");
 
 exports.create = (req, res) => {
   let task = new Task({
@@ -60,6 +61,11 @@ exports.setTaskDoing = (req, res) => {
     task.status = "DOING",
     task.startDate = new Date();
 
+    Feature.findOne({_id: task.feature}).then((feature) => {
+      feature.status = "DOING";
+      feature.save();
+    })
+
     task.save().then((task) => {
       return res.json(task);
     })
@@ -72,6 +78,15 @@ exports.setTaskDone = (req, res) => {
     task.endDate = new Date();
 
     task.save().then((task) => {
+      Task.find({feature: task.feature}).then((tasks) => {
+        undoneTasks = tasks.filter((_task) => _task.status !== 'DONE');
+        if (undoneTasks.length === 0) {
+          Feature.findOne({_id: task.feature}).then((feature) => {
+            feature.status = "DONE";
+            feature.save();
+          })
+        }
+      })
       return res.json(task);
     })
   })
